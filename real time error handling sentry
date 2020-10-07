@@ -1,0 +1,126 @@
+senrty.service.ts
+import { Injectable, ErrorHandler } from '@angular/core';
+import * as Sentry from "@sentry/browser";
+
+Sentry.init({
+    dsn: "your dsn" 
+});
+
+@Injectable({
+  providedIn: 'root'
+})
+
+export class SentryErrorHandler implements ErrorHandler {
+
+  constructor() {}
+
+  handleError(error: any) {
+     // get the users info 
+     if(localStorage.getItem('email') != null){
+      Sentry.configureScope(scope => {
+        scope.setTag("email", localStorage.getItem('email'));
+          scope.setUser({
+              name: localStorage.getItem('name'),
+              number: localStorage.getItem('number')
+          });
+          //also add
+          Sentry.setContext("character", {
+            name: "Mighty Fighter",
+            age: 19,
+            attack_type: "melee",
+          });
+          Sentry.addBreadcrumb({
+            category: "auth",
+            message: "Authenticated user " + "email",
+            level: Sentry.Severity.Info,
+          });
+          
+        });
+  }
+  // get the users info 
+    console.error(error);
+     Sentry.captureException(error.originalError || error);
+     throw error;
+  }
+}
+======================================================================
+http.interceptor.ts
+
+import { HttpInterceptor, HttpRequest, HttpHandler, HttpEvent, HttpErrorResponse, HttpHeaders } from "@angular/common/http"
+import { Observable, throwError } from "rxjs"
+import 'rxjs/add/operator/do'
+import { Injectable } from "@angular/core"
+import { Router } from "@angular/router"
+
+import { catchError, finalize, retry } from 'rxjs/operators';
+import * as Sentry from "@sentry/browser";
+
+@Injectable()
+
+export class HttpInterceptor implements HttpInterceptor {
+
+    constructor(private router: Router) { }
+
+    intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+
+        const token  = localStorage.getItem('token');
+        if (token != null) {
+            req = req.clone({
+                headers: req.headers.set("X-Auth", localStorage.getItem('token'))
+            });
+            return next.handle(req)
+            .pipe(
+                retry(1),
+                catchError((error: HttpErrorResponse) => {
+                    // get the users info 
+                         if(localStorage.getItem('email') != null){
+                          Sentry.configureScope(scope => {
+                            scope.setTag("email", localStorage.getItem('email'));
+                              scope.setUser({
+                                  name: localStorage.getItem('name'),
+                                  number: localStorage.getItem('number')
+                              });
+                               Sentry.captureException(error);
+                            });
+                      }
+                      // get the users info 
+                     
+                    if (error instanceof HttpErrorResponse) {
+                        if (error.status === 401) {
+                            // refresh token
+                            this.router.navigate(['/login']);
+                          }
+                        if (!navigator.onLine) {
+                            // Handle offline error
+                           console.log('No Internet Connection');
+                          } else {
+                            // Handle Http Error (error.status === 403, 404...)
+                             console.log(`Handle Http Error ${error.status} - ${error.message}`);
+                          }
+                    } else {
+                        // Handle Client Error (Angular Error, ReferenceError...)    
+                        console.log(`Client Error ${error}`); 
+                    }
+                      return throwError(error);
+                }),
+                finalize(() => {
+                    const newMessage = `${req.method} ${req.urlWithParams}`;
+                    console.log("finalize message", newMessage);
+                })
+            );
+        }else {
+            this.router.navigateByUrl('/login');
+            return next.handle(req.clone())
+        }
+    }
+}
+=====================================================================
+app.module.ts
+
+// sentry
+import { SentryErrorHandler } from './sentry.service';
+import { HttpInterceptor } from './http.interceptor';
+
+providers: [{ provide: HTTP_INTERCEPTORS, useClass: HttpInterceptor, multi: true },
+            { provide: ErrorHandler, useClass: SentryErrorHandler },
+           ],
