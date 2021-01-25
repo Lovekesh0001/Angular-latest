@@ -1,0 +1,68 @@
+#.html
+
+<div class="upload-apk-wrap" fxFlex="49">
+    <div class="row_label">
+        <div class="account_input_field">
+            <!-- <input type="file" (change)="onapkFileChange($event)" formControlName="apkFile" class="custom-upload"> -->
+            <input type="file" [disabled] = "typeApk ==''" accept="application/*" (change)="onapkFileChange($event)" class="custom-upload">
+        </div>
+    </div>
+    <!-- <mat-error *ngIf="form.get('apkFile').hasError('required')">Apk file is required!</mat-error> -->
+    <mat-progress-bar *ngIf="progressbar" [color]="'accent'" mode="determinate" [value]="progressbarvalue"></mat-progress-bar>
+</div>
+
+.component
+onapkFileChange(event: any) { 
+  var mimeType = event.target.files[0].type;
+  if (mimeType.match(/application\/*/) == null) {
+  console.log("Only application files are supported.")
+    return false;
+  }
+  this.fileList = event.target.files[0];
+  this.uploadInBucket(this.fileList);
+}
+
+uploadInBucket(file){
+    if(!file){
+      return false;
+    }
+    this.progressbar = true;
+    let folderName = `bucketName/foldername/`;
+
+    AWS.config.region = '';
+
+    AWS.config.update({
+      accessKeyId: '',
+      secretAccessKey: '',
+    });
+
+    let bucket = new AWS.S3({
+        params: {
+            Bucket: folderName
+        }
+    });
+
+    let contentToPost = {
+      Key: file.name, 
+      Body: file,
+      ContentEncoding: 'base64',
+      ContentType:file.type,
+      ServerSideEncryption: 'AES256'
+    };
+    let _this = this;
+    bucket.putObject(contentToPost, function (error, data) {
+      console.log(data);
+      if (error) {
+        _this.progressbar = false;
+        console.log("Error in uploading file [" + error + "]");
+          return false;
+      } /* end if error */
+      else {
+        console.log('Successfully uploaded file');
+      } 
+      })
+      .on('httpUploadProgress',function (progress) {
+          // Log Progress Information
+          _this.progressbarvalue = Math.round(progress.loaded / progress.total * 100);
+      });
+  }
