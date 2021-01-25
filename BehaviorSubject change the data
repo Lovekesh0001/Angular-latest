@@ -1,0 +1,32 @@
+displayname.service.ts
+
+import { Injectable } from "@angular/core";
+import { BehaviorSubject, Observable } from "rxjs";
+
+@Injectable({
+    providedIn : 'root'
+}) 
+export class DisplaynameService {
+
+    private displayNameObs$: BehaviorSubject<any> = new BehaviorSubject(null);
+
+    getdisplayNameObs(): Observable<any> {
+        return this.displayNameObs$.asObservable();
+    }
+
+    setdisplayNameObs(profile: any) {
+        this.displayNameObs$.next(profile);
+    }
+}
+
+#set the data
+import {DisplaynameService} from '../../displayname.service';
+private _displaynameService: DisplaynameService
+this._displaynameService.setdisplayNameObs(updatedobj.accountSettingDisplayName);
+
+#get the data
+this._displaynameService.getdisplayNameObs().subscribe(dn => {
+    if(dn !== null){
+        this.userprofileData.accountName = dn;
+    }
+})
