@@ -1,0 +1,36 @@
+If you use the legacy HttpModule and the Http service, switch to HttpClientModule and the HttpClient service. HttpClient simplifies the default ergonomics (you don't need to map to JSON anymore) and now supports typed return values and interceptors. Read more on angular.io.
+
+Delete node_modules and package.lock.json files
+
+@angular 5 to 6
+
+npm install @angular/cli@6
+ng update @angular/cli@6 or ng update @angular/cli@6 --from=1.7.4 --migrate-only
+ng update @angular/core@6
+npm rxjs-tslint
+rxjs-5-to-6-migrate -p src/tsconfig.app.json
+npm install
+
+.map(res => res.json()) ==> remove
+JSON.parse(response._body) ==> remove
+
+import { Angular2Csv } from 'angular2-csv/Angular2-csv'; do not update this package
+
+change if required
+import { trigger, state, style, animate, transition } from '@angular/animations'; 
+
+export let fade = trigger('fade',[
+    transition('void => *',[
+        style({
+            opacity: 0,
+        }),
+        animate(600,
+            style({
+                opacity: 1,
+            })
+        )
+    ])
+]);
+
+make sure not sent undefined or null in the http request body
+
