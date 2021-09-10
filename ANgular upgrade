@@ -1,0 +1,302 @@
+csvif getting error node-sass -> sudo npm install node-sass --save-dev --unsafe-perm=true
+angularnpm install -g @angular-devkit/core   not required
+
+
+ng5 to ng6
+npm install @angular/cli@6
+ng update @angular/cli@6 --from=1.7.4 --migrate-only (check in packages.json-> @angular/cli ->)
+ng update @angular/core@6 --force
+
+npm install -g rxjs-tslint
+npm install rxjs-tslint
+npx rxjs-tslint
+rxjs-5-to-6-migrate -p src/tsconfig.app.json
+
+again
+npm install angular2-csv@0.2.5  (for error)
+
+remove extra from component
+import state from '@angular/core'
+import { setTimeout } from 'timers';
+import {forEach} from "@angular/router/src/utils/collection";
+
+remove @font-face for warning
+remove images path in scss
+
+replace or import
+import { animate, trigger, style, transition } from '@angular/core';
+to import { trigger, style, animate, transition } from '@angular/animations';
+
+delete file
+src/app/theme/components/customPagination/customPagination.service.ts'.
+
+(if getting the dublicate wepack)
+delete @ngtools folder
+npm install
+
+ng serve --aot
+import { trigger, state, style, animate, transition } from '@angular/animations';
+// <reference lib="es2017" />remove (/// to //)
+Angular2Csv remove without use
+
+ng6 to ng7
+
+npm install @angular/cli@7
+ng update @angular/cli@7 --from=6.2.9 --migrate-only (check in package.json "@angular/cli": "^6.2.9")
+ng update @angular/core@7 --force
+(if getting error in typescript npm install typescript@">=3.1.1 and <3.3.0"check in package.json
+
+
+ng7 to ng8
+npm install @angular/cli@8
+ng update @angular/cli@8 --from=7.3.10 --migrate-only (check in package.json "@angular/cli": "^7.3.10")
+auto updated routing children
+ng update @angular/core@8 --force
+npm install angular2-csv@0.2.5
+npm i @angular/compiler-cli@8.2.14
+npm install typescript@">=3.4.0 and <3.6.0"
+
+"@angular/cdk": "^8.2.3", == not needed
+"@angular/common": "^8.2.14",== not needed
+ "@angular/compiler": "^8.2.14",== not needed
+
+
+@remove Http
+import { HttpModule, JsonpModule  } from '@angular/http'; to import { HttpClientModule, HttpClientJsonpModule } from '@angular/common/http';
+
+import { Http } from '@angular/http'; to import { HttpClient } from '@angular/common/http';
+
+===========
+let headers = new Headers(headerData); to let headers =  new  HttpHeaders(headerData);
+new RequestOptions(requestOptionArgs); to requestOptionArgs
+=====
+make sure dont send undefined value
+let headers = new Headers({
+            //'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+            'Access-Control-Allow-Credentials': 'true',==> changed as string
+            'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE',
+            'source': "BUYERS",
+            'idUser': this.getCookie('moglixB2BUserId') ? this.getCookie('moglixB2BUserId') : '',
+            'token': this.getCookie('moglixB2BToken') ? this.getCookie('moglixB2BToken') : '',
+            'idBranch': this.getBranchIdForHeaders(this.getBuyerPlantId()) ? this.getBranchIdForHeaders(this.getBuyerPlantId()) : '',
+            'idCompany': this.getCompanyId() ? this.getCompanyId() : this.getBuyerCompanyId() ? this.getBuyerCompanyId(): '',
+            'application': '1' ==> changed as string
+        });
+======
+let headers = new Headers({
+            //'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+})
+to
+let headers = new HttpHeaders({
+            //'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*'
+});
+=====
+let options = new RequestOptions({
+        headers: headers,
+ });
+to 
+let options =  {headers: headers};
+====
+remove res.json() & use <any>
+return this._http.post(url, body, options).pipe(map(res => res.json()),catchError(err => this.handleError(err)),)
+to 
+return this._http.post(url, body, options).pipe(catchError(err => this.handleError(err)));
+===============
+use <any>
+return this._http.get<any>(url, options).map(res => res).catch(err => this.handleError(err)); return <any>
+======
+ if (error instanceof Response) {
+            const body = error.json() || '';
+            const err = body.error || JSON.stringify(body);
+            errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+        } else {
+            errMsg = error.message ? error.message : error.toString();
+        }
+to
+if (error instanceof HttpErrorResponse) {
+            const err = error.message || JSON.stringify(error.error);
+            errMsg = `${error.status} - ${error.statusText || ''} ${err}`;
+        } else {
+            errMsg = error.message ? error.message : error.toString();
+        }
+====
+add second argument { static: true }
+@ViewChild(SortByComponent)
+to
+@ViewChild(SortByComponent, { static: true })
+=====
+not needed use0.2.5
+npm install --save angular2-csv@latest
+import { Angular2CsvModule } from 'angular2-csv';=>0.2.9
+import app.module.ts
+remove line => import { Angular2Csv } from 'angular2-csv';
+=================
+Property 'modal' does not exist on type 'JQuery<HTMLElement>'
+use in component
+declare var $: any 
+declare var jQuery: any;
+=====
+Type 'number' is not assignable to type 'Coordinates'.
+use :any
+let ulOffset:any = $ul.offset();
+==
+Property 'key' is used before its initialization.
+@Input() key:string; remove after = typeof this.key !== 'undefined' ? this.key : '_id';
+use in ngOnInit
+this.key = this.key !== 'undefined' ? this.key : '_id';
+=====
+.map(res => res.json()) ==> remove 
+let data = res; make it
+
+let data = JSON.parse(res._body); remove
+let data = res; make it
+
+ng8 to ng9 (added ngcc ivy)
+npm install @angular/cli@9
+ng update @angular/cli@9 --from=8.3.29 --migrate-only (check in package.json "@angular/cli": "^8.3.29")
+ng update @angular/core@9 --force
+
+npm i ngx-bootstrap@5.5.0
+npm install typescript@">=3.6.4 and <3.9.0"
+npm i ng2-smart-table@latest
+npm i ng2-completer@latest
+npm i ng2-select@latest
+npm i @akveo/ng2-completer --save
+==
+in tsconfig.json
+"angularCompilerOptions": {
+    "enableIvy": false
+  },
+===
+if getting Angular2Csv error
+npm i angular2-csv@0.2.5
+====
+ To allow any property add 'NO_ERRORS_SCHEMA' to the '@NgModule.schemas' of this component.
+in app.module.ts
+import { NO_ERRORS_SCHEMA, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
+schemas: [
+        CUSTOM_ELEMENTS_SCHEMA,
+        NO_ERRORS_SCHEMA
+      ]
+======
+set path for loadChildren
+ { path: 'view', loadChildren: () => import('./components/view/view.module').then(m => m.ViewModule)},
+======
+remove path from baSlimScroll.directive.ts
+import './baSlimScroll.loader.ts';
+
+add script in angular.json
+"scripts": [
+              "node_modules/jquery-slimscroll/jquery.slimscroll.min.js"
+            ]
+===
+in package.json 
+add 
+"scripts": {
+    "postinstall": "ngcc"
+  },
+===========
+
+ng9 to ng10
+npm i tslib@latest
+ng add @angular/localize
+"target": "es2015", => "target": "es2018", 
+"module": "esnext", => "module": "es2020",
+
+npm install @angular/cli@10
+ng update @angular/cli@10 --from=9.1.15 --migrate-only (check in package.json "@angular/cli": "^9.1.15")
+ng update @angular/core@10 --force
+=======
+nga.module.ts
+export class NgaModule {
+  static forRoot(): ModuleWithProviders {
+    return <ModuleWithProviders> {
+      ngModule: NgaModule,
+      providers: [
+        BaThemeConfigProvider,
+        BaThemeConfig,
+        ...NGA_VALIDATORS,
+        ...NGA_SERVICES
+      ],
+    };
+  }
+}
+replace
+export class NgaModule {
+  static forRoot(): ModuleWithProviders<NgaModule> {
+    return {
+      ngModule: NgaModule,
+      providers: [
+        BaThemeConfigProvider,
+        BaThemeConfig,
+        ...NGA_VALIDATORS,
+        ...NGA_SERVICES
+      ],
+    };
+  }
+}
+
+ng10 to ng11
+npm install @angular/cli@11
+ng update @angular/cli@11 --from=10.2.3 --migrate-only (check in package.json "@angular/cli": "^10.2.3")
+ng update @angular/core@11 --force
+==
+also intialize all variables value data.service.ts
+npm install typescript@">=4.0.0 and <4.2.0"
+
+
+ng11 to ng12
+npm install @angular/cli@12
+ng update @angular/cli@12 --from=11.2.14 --migrate-only (check in package.json "@angular/cli": "^11.2.14")
+ng update @angular/core@12 --force
+==
+remove zone.js change detection warning
+"target": "es2017", => "target": "es2015",
+==
+for Schema Errors
+import { CUSTOM_ELEMENTS_SCHEMA, NO_ERRORS_SCHEMA } from '@angular/core';
+schemas: [
+    CUSTOM_ELEMENTS_SCHEMA,
+    NO_ERRORS_SCHEMA
+  ]
+======
+remove from nga.Module.ts(if getting error in this file)
+SelectModule
+======
+The operation `#0190cc minus 24` is deprecated and will be an error in future versions.Consider using Sass's color functions instead.
+in _button.scss
+$hover: 24; => $hover: '#24';
+===
+For daterange picker include css and js in angular.json
+"node_modules/bootstrap-daterangepicker/daterangepicker.css"
+
+"node_modules/bootstrap-daterangepicker/moment.js", "node_modules/bootstrap-daterangepicker/daterangepicker.js",
+=====
+core.js:6479 ERROR Error: Uncaught (in promise): Error: Type SelectModule does not have 'ɵmod' property.
+Error: Type SelectModule does not have 'ɵmod' property.
+
+delete nodemodules and package.lock file
+npm install
+=====
+if sidebar not activate 
+basidemenu.component.ts
+this._onRouteChange = this._router.events.subscribe((event) => {
+      this.selectMenuAndNotify();
+        //console.log('navigation event', event);
+      // if (event instanceof NavigationEnd) {
+      //   if (this.menuItems) {
+      //     this.selectMenuAndNotify();
+      //   } else {
+      //     // on page load we have to wait as event is fired before menu elements are prepared
+      //     setTimeout(() => this.selectMenuAndNotify());
+      //   }
+      // }
+    });
+
+to
+this._onRouteChange = this._router.events.subscribe((event) => {
+      this.selectMenuAndNotify();
+    });
